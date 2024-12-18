@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -63,7 +61,7 @@ const TicketDetails = () => {
   const handleSubmit = async (query, status) => {
     if (role === "user") {
       try {
-        await sendQueryToTicket(ticketID, query); 
+        await sendQueryToTicket(ticketID, query);
         console.log("Query submitted successfully");
       } catch (error) {
         console.error("Error sending query:", error);
@@ -87,7 +85,6 @@ const TicketDetails = () => {
       console.error("Error updating ticket status:", error);
     }
   };
-
 
   if (!ticket) {
     return <Typography>Loading...</Typography>; // Show loading message while fetching ticket data
@@ -120,7 +117,12 @@ const TicketDetails = () => {
         <Typography variant="subtitle1">Status: {ticketStatus}</Typography>
         <Typography variant="subtitle1">Date: {ticket.createdAt}</Typography>
 
-        <Button variant="contained" color="primary" onClick={handleDialogOpen}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleDialogOpen}
+          disabled={ticket.status === "Closed"}
+        >
           {role !== "user" ? "Send Solution" : "Send Query"}
         </Button>
         {role === "user" ? (
@@ -128,6 +130,7 @@ const TicketDetails = () => {
             variant="contained"
             color="primary"
             onClick={handleStatusDialogOpen} // Open StatusChangeDialog when clicked
+            disabled={ticket.status === "Closed"}
           >
             Change Status
           </Button>
@@ -178,7 +181,9 @@ const TicketDetails = () => {
                 <TableRow key={index}>
                   <TableCell>{item.query}</TableCell>
                   <TableCell>
-                    {ticket.solutions[index] ? ticket.solutions[index].solutionText : "Pending"}
+                    {ticket.solutions[index]
+                      ? ticket.solutions[index].solutionText
+                      : "Pending"}
                   </TableCell>
                   <TableCell>{item.createdAt}</TableCell>
                 </TableRow>

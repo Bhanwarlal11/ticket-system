@@ -11,6 +11,8 @@ const solutionRoutes = require("./routes/solutionRoutes");
 const connectDB = require("./config/db");
 const { escalationJob } = require("./jobs/escalationJob.js");
 
+require("./config/scheduler.js"); // Import scheduler
+
 // Load environment variables from .env file
 dotenv.config();
 
@@ -32,7 +34,7 @@ app.use(
 
 connectDB();
 
-escalationJob();
+// escalationJob();
 
 // Import routes
 

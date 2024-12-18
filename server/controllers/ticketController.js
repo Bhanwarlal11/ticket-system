@@ -19,11 +19,25 @@ const createTicket = async (req, res) => {
         .json({ success: false, message: "Category or Subcategory not found" });
     }
 
+    // Fetch the predefined solution based on the subCategory
+    const solution = await Solution.findOne({ subCategoryId: subCategory });
+
     // Prepare query object since queries is an array
     const newQuery = {
       query: query, // Assuming the query comes as a single string from the request
       createdAt: new Date(),
     };
+
+    // Prepare the initial solution
+    const initialSolution = solution
+      ? {
+          solutionText: solution.solutionText,
+          providedBy: solution.providedBy || null, // Use providedBy if available, otherwise null
+        }
+      : {
+          solutionText: "No solution available.",
+          providedBy: null, // Automated solution
+        };
 
     // Create the ticket using the user ID
     const newTicket = new Ticket({
@@ -31,7 +45,9 @@ const createTicket = async (req, res) => {
       queries: [newQuery], // Create ticket with the queries array
       category,
       subCategory,
-      solutions: [], // Initially, the solutions array is empty
+      solutions: [initialSolution], // Add the initial solution to the solutions array
+      status: "Awaited",
+      escalatedTo: "teamMember",
     });
 
     // Save the new ticket to the database
@@ -48,7 +64,6 @@ const createTicket = async (req, res) => {
   }
 };
 
-// Get all tickets for the logged-in user
 const getUserTickets = async (req, res) => {
   const user = req.user;
 
@@ -119,9 +134,6 @@ const getTicketById = async (req, res) => {
         select: "name riskLevel",
       });
 
-  
-      
-
     if (!ticket) {
       return res
         .status(404)
@@ -129,41 +141,6 @@ const getTicketById = async (req, res) => {
     }
 
     res.json({ success: true, ticket });
-  } catch (error) {
-    res.status(500).json({ success: false, message: "Server error", error });
-  }
-};
-
-// Update the status of a ticket (e.g., to 'In Progress', 'Resolved', etc.)
-const updateTicketStatus = async (req, res) => {
-  const { ticketId } = req.params;
-  const { status } = req.body;
-
-  try {
-    // Validate the status
-    const validStatuses = ["Open", "Awaited", "Resolved", "Closed"];
-    if (!validStatuses.includes(status)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid status" });
-    }
-
-    const ticket = await Ticket.findById(ticketId);
-
-    if (!ticket) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Ticket not found" });
-    }
-
-    ticket.status = status;
-    await ticket.save();
-
-    res.json({
-      success: false,
-      message: "Ticket status updated successfully",
-      ticket,
-    });
   } catch (error) {
     res.status(500).json({ success: false, message: "Server error", error });
   }
@@ -310,6 +287,63 @@ const sendQuery = async (req, res) => {
   }
 };
 
+const checkEscalations = async () => {
+  const now = new Date();
+
+  try {
+    // Escalate tickets to Manager
+    await Ticket.updateMany(
+      {
+        status: { $ne: "Closed" },
+        escalatedTo: "teamMember",
+        escalationTime: { $lte: new Date(now - 5 * 60 * 1000) }, // 5 minutes ago
+      },
+      { $set: { escalatedTo: "manager", escalationTime: now } }
+    );
+
+    // Escalate tickets to Admin
+    await Ticket.updateMany(
+      {
+        status: { $ne: "Closed" },
+        escalatedTo: "manager",
+        escalationTime: { $lte: new Date(now - 5 * 60 * 1000) }, // 5 minutes ago
+      },
+      { $set: { escalatedTo: "admin", escalationTime: now } }
+    );
+  } catch (error) {
+    console.error("Error in escalation logic:", error);
+  }
+};
+
+// Update the status of a ticket (e.g., to 'In Progress', 'Resolved', etc.)
+const updateTicketStatus = async (req, res) => {
+  const { ticketId } = req.params;
+  const { status } = req.body;
+
+  try {
+    const ticket = await Ticket.findById(ticketId);
+
+    if (!ticket)
+      return res
+        .status(404)
+        .json({ success: false, message: "Ticket not found" });
+
+    if (ticket.status === "Closed") {
+      return res
+        .status(400)
+        .json({ success: false, message: "Ticket is already closed." });
+    }
+
+    ticket.status = status;
+    if (status === "Resolved") ticket.status = "Resolved";
+
+    await ticket.save();
+    res.status(200).json({ success: true, ticket });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createTicket,
   getUserTickets,
@@ -320,4 +354,5 @@ module.exports = {
   closeTicket,
   sendSolutionToTicket,
   sendQuery,
+  checkEscalations,
 };

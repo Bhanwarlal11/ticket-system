@@ -29,11 +29,13 @@ const UserTickets = () => {
         const response = await getUserTickets();
         console.log(response.data.tickets); // Check the structure of the tickets data
         // Map over the tickets and extract category and subcategory names
-        setTickets(response.data.tickets.map(ticket => ({
-          ...ticket,
-          category: ticket.category.name, // Assuming category has 'name' field
-          subcategory: ticket.subCategory.name, // Assuming subcategory has 'name' field
-        })));
+        setTickets(
+          response.data.tickets.map((ticket) => ({
+            ...ticket,
+            category: ticket.category.name, // Assuming category has 'name' field
+            subcategory: ticket.subCategory.name, // Assuming subcategory has 'name' field
+          }))
+        );
       } catch (err) {
         setError("Failed to fetch tickets");
       } finally {
@@ -43,7 +45,6 @@ const UserTickets = () => {
 
     fetchTickets(); // Call the function to fetch tickets
   }, []); // Empty dependency array means this will run once when the component mounts
-
 
   return (
     <Box>
@@ -65,7 +66,7 @@ const UserTickets = () => {
       {loading ? (
         <CircularProgress /> // Display loading spinner while fetching data
       ) : error ? (
-        <Typography color="error">{error}</Typography> // Show error message if fetching fails
+        <Typography variant="h8" textAlign={"center"}>No Ticket, add new ticket.</Typography> // Show error message if fetching fails
       ) : (
         <TicketsTable tickets={tickets} /> // Display tickets if available
       )}

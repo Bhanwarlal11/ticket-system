@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI, {
-      dbName: "ticket-system",  // Specifies the database name
+      dbName: "ticket-system", // Specifies the database name
       // useNewUrlParser: true,
       // useUnifiedTopology: true,
     });

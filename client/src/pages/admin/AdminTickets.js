@@ -10,6 +10,7 @@ import {
   createSolution,
   getAllTickets,
 } from "../../api/api"; // Import API calls
+import { useAuth } from "../../context/authContext";
 
 const AdminTickets = () => {
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
@@ -20,22 +21,52 @@ const AdminTickets = () => {
   const [successMessage, setSuccessMessage] = useState(""); // Track success message
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
   const [tickets, setTickets] = useState([]);
+  const { role } = useAuth();
 
-  // Fetch the user's tickets on component mount
+  // // Fetch the user's tickets on component mount
+  // useEffect(() => {
+  //   const fetchTickets = async () => {
+  //     setLoading(true); // Set loading to true before API call
+  //     try {
+  //       const response = await getAllTickets();
+  //       console.log(response.data.tickets); // Check the structure of the tickets data
+  //       // Map over the tickets and extract category and subcategory names
+  //       setTickets(
+  //         response.data.tickets.map((ticket) => ({
+  //           ...ticket,
+  //           category: ticket.category.name, // Assuming category has 'name' field
+  //           subcategory: ticket.subCategory.name, // Assuming subcategory has 'name' field
+  //         }))
+
+  //       );
+  //     } catch (err) {
+  //       setError("Failed to fetch tickets");
+  //     } finally {
+  //       setLoading(false); // Set loading to false once the API call is complete
+  //     }
+  //   };
+
+  //   fetchTickets(); // Call the function to fetch tickets
+  // }, []); // Empty dependency array means this will run once when the component mounts
+
   useEffect(() => {
     const fetchTickets = async () => {
       setLoading(true); // Set loading to true before API call
       try {
         const response = await getAllTickets();
         console.log(response.data.tickets); // Check the structure of the tickets data
-        // Map over the tickets and extract category and subcategory names
-        setTickets(
-          response.data.tickets.map((ticket) => ({
+
+        // Filter tickets based on the 'escalatedTo' field dynamically from the 'role'
+        const filteredTickets = response.data.tickets
+          .filter((ticket) => ticket.escalatedTo === role) // Only tickets escalated to the user's role
+          .map((ticket) => ({
             ...ticket,
             category: ticket.category.name, // Assuming category has 'name' field
             subcategory: ticket.subCategory.name, // Assuming subcategory has 'name' field
-          }))
-        );
+          }));
+
+        // Update the tickets state with filtered and mapped tickets
+        setTickets(filteredTickets);
       } catch (err) {
         setError("Failed to fetch tickets");
       } finally {
@@ -44,7 +75,7 @@ const AdminTickets = () => {
     };
 
     fetchTickets(); // Call the function to fetch tickets
-  }, []); // Empty dependency array means this will run once when the component mounts
+  }, [role]); // The effect will run again if the 'role' changes
 
   const handleCategorySubmit = async (name) => {
     setLoading(true);
@@ -137,13 +168,13 @@ const AdminTickets = () => {
         >
           Add New Solution
         </Button>
-        <Button
+        {/* <Button
           variant="contained"
           color="secondary"
           sx={{ marginBottom: "1rem" }}
         >
           View All Tickets
-        </Button>
+        </Button> */}
 
         {/* Dialogs */}
         <CreateCategoryDialog

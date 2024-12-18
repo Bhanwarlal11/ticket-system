@@ -61,10 +61,11 @@ const ticketSchema = new mongoose.Schema(
       default: "teamMember",
       required: false,
     },
-    escalationTime: {
-      type: Date,
-      required: false,
-    },
+    // escalationTime: {
+    //   type: Date,
+    //   required: false,
+    // },
+    escalationTime: { type: Date, default: Date.now },
   },
   {
     timestamps: true,

@@ -54,4 +54,12 @@ router.post(
   ticketController.sendQuery
 );
 
+// router.post('/check',)
+
+router.put(
+  "/:ticketId/status",
+  authenticateJWT,
+  ticketController.updateTicketStatus
+);
+
 module.exports = router;

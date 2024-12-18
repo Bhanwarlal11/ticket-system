@@ -44,32 +44,40 @@ const TicketsTable = ({ tickets = [] }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {tickets.map((ticket) => (
-            <TableRow key={ticket._id}>
-              <TableCell>{ticket._id}</TableCell>
-              <TableCell>{ticket.queries[0].query}</TableCell>
-              <TableCell>{ticket.category}</TableCell>
-              <TableCell>{ticket.subcategory}</TableCell>
-              <TableCell>
-                {ticket.solutions[0]
-                  ? ticket.solutions[0].solutionText
-                  : "Pending"}
-              </TableCell>
-              <TableCell>{ticket.status}</TableCell>
-              {role !== "user" && <TableCell>{ticket.date}</TableCell>}
-              {role !== "user" && <TableCell>{ticket.escalatedTo}</TableCell>}
-              <TableCell align="center">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="small"
-                  onClick={() => handleViewClick(ticket._id)} // Handle the button click
-                >
-                  View
-                </Button>
+          {tickets.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={8} align="center">
+                No tickets found
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            tickets.map((ticket) => (
+              <TableRow key={ticket._id}>
+                <TableCell>{ticket._id}</TableCell>
+                <TableCell>{ticket.queries[0].query}</TableCell>
+                <TableCell>{ticket.category}</TableCell>
+                <TableCell>{ticket.subcategory}</TableCell>
+                <TableCell>
+                  {ticket.solutions[0]
+                    ? ticket.solutions[0].solutionText
+                    : "Pending"}
+                </TableCell>
+                <TableCell>{ticket.status}</TableCell>
+                {role !== "user" && <TableCell>{ticket.date}</TableCell>}
+                {role !== "user" && <TableCell>{ticket.escalatedTo}</TableCell>}
+                <TableCell align="center">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={() => handleViewClick(ticket._id)} // Handle the button click
+                  >
+                    View
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </TableContainer>
