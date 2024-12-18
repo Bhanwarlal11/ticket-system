@@ -146,7 +146,7 @@ const AdminTickets = () => {
       <Box sx={{ padding: "2rem" }}>
         <Button
           variant="contained"
-          color="primary"
+          color={role !== "user" ? "secondary" : "primary"}
           onClick={() => setOpenCategoryDialog(true)}
           sx={{ marginBottom: "1rem", marginRight: "1rem" }}
         >
@@ -154,7 +154,7 @@ const AdminTickets = () => {
         </Button>
         <Button
           variant="contained"
-          color="primary"
+          color={role !== "user" ? "secondary" : "primary"}
           onClick={() => setOpenSubcategoryDialog(true)}
           sx={{ marginBottom: "1rem", marginRight: "1rem" }}
         >
@@ -162,7 +162,7 @@ const AdminTickets = () => {
         </Button>
         <Button
           variant="contained"
-          color="primary"
+          color={role !== "user" ? "secondary" : "primary"}
           onClick={() => setOpenSolutionDialog(true)}
           sx={{ marginBottom: "1rem", marginRight: "1rem" }}
         >

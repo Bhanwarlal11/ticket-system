@@ -10,6 +10,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Chip,
 } from "@mui/material";
 import { useAuth } from "../context/authContext";
 import { useParams } from "react-router-dom";
@@ -114,12 +115,15 @@ const TicketDetails = () => {
         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
           Ticket ID: {ticket._id}
         </Typography>
-        <Typography variant="subtitle1">Status: {ticketStatus}</Typography>
+        <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+          Status:
+          <Chip label={ticketStatus} />
+        </Typography>
         <Typography variant="subtitle1">Date: {ticket.createdAt}</Typography>
 
         <Button
           variant="contained"
-          color="primary"
+          color={role !== "user" ? "secondary" : "primary"}
           onClick={handleDialogOpen}
           disabled={ticket.status === "Closed"}
         >
@@ -128,7 +132,7 @@ const TicketDetails = () => {
         {role === "user" ? (
           <Button
             variant="contained"
-            color="primary"
+            color={role !== "user" ? "secondary" : "primary"}
             onClick={handleStatusDialogOpen} // Open StatusChangeDialog when clicked
             disabled={ticket.status === "Closed"}
           >
@@ -138,11 +142,13 @@ const TicketDetails = () => {
       </Box>
 
       <Box>
-        <Typography variant="subtitle1">
-          Category: {ticket.category.name}
+        <Typography variant="subtitle1" fontWeight={"bold"}>
+          Category:
+          <Chip label={ticket.category.name} />
         </Typography>
-        <Typography variant="subtitle1">
-          Subcategory: {ticket.subCategory.name}
+        <Typography variant="subtitle1" fontWeight={"bold"}>
+          Subcategory:
+          <Chip label={ticket.subCategory.name} />
         </Typography>
       </Box>
       <Box>

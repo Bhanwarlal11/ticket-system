@@ -112,7 +112,7 @@ const Navbar = () => {
       <AppBar
         position="static"
         sx={{
-          backgroundColor: role !== "user" ? "#4a148c" : "primary.main", // Change color based on role
+          backgroundColor: role !== "user" ? "secondary.main" : "primary.main", // Change color based on role
         }}
       >
         <Toolbar>
@@ -137,6 +137,10 @@ const Navbar = () => {
               </Typography>
             </Link>
           )}
+
+          <Typography variant="h7" fontWeight={"bold"}>
+            Role: {role}
+          </Typography>
 
           {/* Desktop Menu (Avatar with Profile/Logout) */}
           <Box sx={{ display: { xs: "none", md: "flex" } }}>

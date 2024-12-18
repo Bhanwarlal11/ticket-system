@@ -8,6 +8,7 @@ import {
   TableRow,
   Paper,
   Button,
+  Chip,
 } from "@mui/material";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
@@ -38,7 +39,7 @@ const TicketsTable = ({ tickets = [] }) => {
             <TableCell>Subcategory</TableCell>
             <TableCell>Solution</TableCell>
             <TableCell>Status</TableCell>
-            {role !== "user" && <TableCell>Date</TableCell>}
+            {/* {role !== "user" && <TableCell>Date</TableCell>} */}
             {role !== "user" && <TableCell>Escalated To</TableCell>}
             <TableCell align="center">Action</TableCell>
           </TableRow>
@@ -55,20 +56,38 @@ const TicketsTable = ({ tickets = [] }) => {
               <TableRow key={ticket._id}>
                 <TableCell>{ticket._id}</TableCell>
                 <TableCell>{ticket.queries[0].query}</TableCell>
-                <TableCell>{ticket.category}</TableCell>
-                <TableCell>{ticket.subcategory}</TableCell>
+                <TableCell>
+                  <Chip label={ticket.category} />
+                </TableCell>
+                <TableCell>
+                  <Chip label={ticket.subcategory} />
+                </TableCell>
                 <TableCell>
                   {ticket.solutions[0]
                     ? ticket.solutions[0].solutionText
                     : "Pending"}
                 </TableCell>
-                <TableCell>{ticket.status}</TableCell>
-                {role !== "user" && <TableCell>{ticket.date}</TableCell>}
-                {role !== "user" && <TableCell>{ticket.escalatedTo}</TableCell>}
+                <TableCell>
+                  <Chip
+                    label={ticket.status}
+                    variant="outlined"
+                    color={role !== "user" ? "secondary" : "primary"}
+                  />
+                </TableCell>
+                {/* {role !== "user" && <TableCell>{ticket.date}</TableCell>} */}
+                {role !== "user" && (
+                  <TableCell>
+                    <Chip
+                      label={ticket.escalatedTo}
+                      variant="outlined"
+                      color="secondary"
+                    />
+                  </TableCell>
+                )}
                 <TableCell align="center">
                   <Button
                     variant="contained"
-                    color="primary"
+                    color={role !== "user" ? "secondary" : "primary"}
                     size="small"
                     onClick={() => handleViewClick(ticket._id)} // Handle the button click
                   >

@@ -1,62 +1,3 @@
-// const schedule = require("node-schedule");
-// const Ticket = require("../models/Ticket.js");
-
-// const checkEscalations = async () => {
-//   const now = new Date();
-
-//   // Escalate to Manager
-//   const toManager = await Ticket.find({
-//     status: { $ne: "Closed" },
-//     escalatedTo: "teamMember",
-//     escalationTime: { $lte: new Date(now - 1 * 60 * 1000) }, // 5 minutes
-//   });
-
-//   for (const ticket of toManager) {
-//     ticket.escalatedTo = "manager";
-//     ticket.escalationTime = now;
-//     await ticket.save();
-//   }
-
-//   // Escalate to Admin
-//   const toAdmin = await Ticket.find({
-//     status: { $ne: "Closed" },
-//     escalatedTo: "manager",
-//     escalationTime: { $lte: new Date(now - 1 * 60 * 1000) }, // 5 minutes
-//   });
-
-//   for (const ticket of toAdmin) {
-//     ticket.escalatedTo = "admin";
-//     ticket.escalationTime = now;
-//     await ticket.save();
-//   }
-// };
-
-// const autoCloseTickets = async () => {
-//   const now = new Date();
-
-//   const ticketsToClose = await Ticket.find({
-//     status: { $ne: "Closed" },
-//     "solutions.createdAt": { $lte: new Date(now - 60 * 60 * 1000) }, // 1 hour
-//   });
-
-//   for (const ticket of ticketsToClose) {
-//     ticket.status = "Closed";
-//     await ticket.save();
-//   }
-// };
-// console.log("Scheduler started");
-
-// // Schedule jobs
-// // schedule.scheduleJob("* * * * *", checkEscalations); // Runs every minute
-// // schedule.scheduleJob("*/5 * * * *", autoCloseTickets); // Runs every 5 minutes
-
-// setInterval(checkEscalations, 5000); // 5000ms = 5 seconds
-// schedule.scheduleJob("*/2 * * * *", autoCloseTickets);
-
-// console.log("Jobs scheduled");
-
-// module.exports = { checkEscalations, autoCloseTickets };
-
 const schedule = require("node-schedule");
 const Ticket = require("../models/Ticket.js");
 
@@ -114,22 +55,29 @@ const checkEscalations = async () => {
 const autoCloseTickets = async () => {
   console.log("Running auto-close check...");
   try {
-    const now = new Date();
+    const now = new Date(); // Get current date/time
 
+    // Query for tickets that are not closed or resolved and have been updated more than 5 minutes ago
     const ticketsToClose = await Ticket.find({
-      status: { $ne: "Closed" },
-      // updatedAt: { $lte: new Date(now - 60 * 60 * 1000) }, // 1 hour
-      updatedAt: { $lte: new Date(now - 5 * 60 * 1000) }, // 5 min
+      status: { $nin: ["Closed", "Resolved"] }, // Exclude "Closed" and "Resolved" tickets
+      updatedAt: {
+        $lte: new Date(now - 5 * 60 * 1000), // Ticket must have been updated more than 5 minutes ago
+      },
     });
 
+    // Loop through the tickets to close them
     for (const ticket of ticketsToClose) {
-      ticket.status = "Closed";
-      await ticket.save();
-      console.log(`Ticket ${ticket._id} auto-closed.`);
+      // Add condition to check if ticket is not "Resolved" or "Closed"
+      if (ticket.status !== "Resolved" && ticket.status !== "Closed") {
+        ticket.status = "Closed"; // Update ticket status to "Closed"
+        await ticket.save(); // Save the updated ticket
+        console.log(`Ticket ${ticket._id} auto-closed.`); // Log the ticket ID
+      }
     }
   } catch (error) {
-    console.error("Error auto-closing tickets:", error.message);
+    console.error("Error auto-closing tickets:", error.message); // Catch and log any errors
   }
+
   console.log("Auto-close check completed.");
 };
 
