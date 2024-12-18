@@ -125,7 +125,7 @@ const TicketDetails = () => {
           variant="contained"
           color={role !== "user" ? "secondary" : "primary"}
           onClick={handleDialogOpen}
-          disabled={ticket.status === "Closed"}
+          disabled={ticket.status === "Closed" || ticket.status === "Resolved"}
         >
           {role !== "user" ? "Send Solution" : "Send Query"}
         </Button>
@@ -134,7 +134,9 @@ const TicketDetails = () => {
             variant="contained"
             color={role !== "user" ? "secondary" : "primary"}
             onClick={handleStatusDialogOpen} // Open StatusChangeDialog when clicked
-            disabled={ticket.status === "Closed"}
+            disabled={
+              ticket.status === "Closed" || ticket.status === "Resolved"
+            }
           >
             Change Status
           </Button>

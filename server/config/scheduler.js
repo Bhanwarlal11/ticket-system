@@ -11,7 +11,7 @@ const escalateTickets = async (currentRole, nextRole, escalationDuration) => {
     const now = new Date();
 
     const ticketsToEscalate = await Ticket.find({
-      status: { $ne: "Closed" },
+      status: { $nin: ["Closed", "Resolved"] },
       escalatedTo: currentRole,
       escalationTime: { $lte: new Date(now - escalationDuration) },
     });
