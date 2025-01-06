@@ -2,8 +2,8 @@ const schedule = require("node-schedule");
 const Ticket = require("../models/Ticket.js");
 
 // Configuration constants
-const ESCALATION_INTERVAL_MINUTES = 1;
-const AUTO_CLOSE_INTERVAL_MINUTES = 1;
+const ESCALATION_INTERVAL_MINUTES = 15;
+const AUTO_CLOSE_INTERVAL_MINUTES = 15;
 
 // Helper function to update ticket escalation
 const escalateTickets = async (currentRole, nextRole, escalationDuration) => {

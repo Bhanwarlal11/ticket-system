@@ -61,7 +61,6 @@ const loginUser = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found" });
     }
-    console.log(email);
 
     // Check if the password matches
     const isMatch = await user.matchPassword(password);
@@ -70,9 +69,13 @@ const loginUser = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Invalid credentials" });
     }
+console.log(isMatch);
 
     // Generate JWT token
     const token = generateToken(user._id, user.role);
+    // console.log(email);
+    console.log(token);
+    
 
     res.cookie("token", token, {
       httpOnly: false,

@@ -1,5 +1,3 @@
-
-
 import React from "react";
 import { useAuth } from "./context/authContext";
 import {
@@ -9,14 +7,14 @@ import {
   Navigate,
 } from "react-router-dom";
 import AdminLogin from "./pages/admin/AdminLogin";
-import AdminTickets from './pages/admin/AdminTickets.js'
-import AdminTicketDetail from './pages/admin/AdminTicketDetail.js'
+import AdminTickets from "./pages/admin/AdminTickets.js";
+import AdminTicketDetail from "./pages/admin/AdminTicketDetail.js";
 import UserTickets from "./pages/user/UserTickets";
 import UserTicketDetail from "./pages/user/UserTicketDetail";
 import UserAuthForm from "./pages/user/UserAuthForm";
 import AuthLayout from "./common/AuthLayout";
-import Profile from './components/Profile.js'
-
+import Profile from "./components/Profile.js";
+import Charts from "./components/Charts.js";
 
 const App = () => {
   const { isAuthenticated, role } = useAuth();
@@ -58,10 +56,7 @@ const App = () => {
           }
         >
           <Route path="/tickets" element={<UserTickets />} />
-          <Route
-            path="/tickets/:ticketID"
-            element={<UserTicketDetail />}
-          />
+          <Route path="/tickets/:ticketID" element={<UserTicketDetail />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
 
@@ -84,6 +79,7 @@ const App = () => {
             path="/admin/tickets/:ticketID"
             element={<AdminTicketDetail />}
           />
+          <Route path="/admin/charts" element={<Charts />} />
           <Route path="/admin/profile" element={<Profile />} />
         </Route>
       </Routes>

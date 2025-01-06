@@ -11,6 +11,7 @@ import {
   getAllTickets,
 } from "../../api/api"; // Import API calls
 import { useAuth } from "../../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 const AdminTickets = () => {
   const [openCategoryDialog, setOpenCategoryDialog] = useState(false);
@@ -22,6 +23,7 @@ const AdminTickets = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar open state
   const [tickets, setTickets] = useState([]);
   const { role } = useAuth();
+  const navigate = useNavigate();
 
   // // Fetch the user's tickets on component mount
   // useEffect(() => {
@@ -168,13 +170,14 @@ const AdminTickets = () => {
         >
           Add New Solution
         </Button>
-        {/* <Button
+        <Button
           variant="contained"
           color="secondary"
           sx={{ marginBottom: "1rem" }}
+          onClick={()=> navigate('/admin/charts')}
         >
-          View All Tickets
-        </Button> */}
+          DashBoard
+        </Button>
 
         {/* Dialogs */}
         <CreateCategoryDialog
